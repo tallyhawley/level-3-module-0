@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class GuestBook implements MouseListener, ActionListener {
 	// Create a GUI with two buttons. One button reads "Add Name" and the other
@@ -54,7 +55,7 @@ public class GuestBook implements MouseListener, ActionListener {
 		this.viewNames = new JButton();
 		addPerson.setText("add person");
 		viewNames.setText("view names");
-		
+		label = new JLabel();
 		panel.setOpaque(true);
 		addPerson.setOpaque(true);
 		viewNames.setOpaque(true);
@@ -82,23 +83,28 @@ public class GuestBook implements MouseListener, ActionListener {
 		if (e.getSource() == addPerson) {
 			if(!pressed) {
 				pressed = true;
-				input = new JTextField(20);
+				input = new JTextField(29);
 				input.addActionListener(this);
 				input.setOpaque(true);
 				panel.add(input);
+				label.setOpaque(false);
 				frame.pack();
 			}
 		} else if (e.getSource() == viewNames) {
 			pressed = false;
-			label = new JLabel();
-			panel.remove(input);
+			
+			input.setOpaque(false);
 			frame.pack();
 			String[] array = new String[names.size()];
 			for(int i=0;i<names.size();i++) {
-				String temp = "guest " + (i+1) + ": " + names.get(i) +"\n";
+				String temp = "<html>guest " + (i+1) + ": " + names.get(i) + "<br><html>";
 				array[i] = temp;
 			}
-			array.toString();
+			String all = array[0];
+			for(int i=1;i<array.length;i++) {
+				all += array[i];
+			}
+			label.setText(all);
 			label.setOpaque(true);
 			panel.add(label);
 			frame.pack();
