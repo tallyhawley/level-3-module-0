@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 import javax.swing.JFrame;
@@ -25,8 +26,10 @@ public class TextUndoRedo implements KeyListener{
 	 * */
 	
 	JFrame frame;
+	int length;
 	JPanel panel;
 	JLabel label;
+	Stack<String> characters;
 	Stack<String> stack;
 	String string = "";
 	String character;
@@ -37,6 +40,7 @@ public class TextUndoRedo implements KeyListener{
 	
 	private void setupGUI() {
 		stack = new Stack<String>();
+		characters = new Stack<String>();
 		frame = new JFrame("text");
 		panel = new JPanel();
 		label = new JLabel();
@@ -58,8 +62,12 @@ public class TextUndoRedo implements KeyListener{
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		character = String.valueOf(e.getKeyChar());
-		string += character;
+		if((int)e.getKeyChar() != 8){
+			character = String.valueOf(e.getKeyChar());
+			System.out.println(e.getKeyChar());
+			characters.push(character);
+			string+=character;
+		}
 		label.setText(string);
 		frame.pack();
 	}
@@ -68,17 +76,30 @@ public class TextUndoRedo implements KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		System.out.println(e.getKeyCode());
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-			stack.push(character);
-			if (string != null && string.length() > 0) {
-		        string = string.substring(0, string.length() - 1);
-		    }
+			try{
+				stack.push(characters.pop());
+				string = "";
+				for(String a : characters){
+					//System.out.println(a);
+					string += a;
+				}
+			}catch(EmptyStackException f){
+				
+			}
 			label.setText(string);
 			frame.pack();
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
-			string += stack.pop();
+			try{
+				String newchar = stack.pop();
+				characters.push(newchar);
+				string += newchar;
+			} catch(EmptyStackException f){
+				
+			}
 			label.setText(string);
 			frame.pack();
 		}
